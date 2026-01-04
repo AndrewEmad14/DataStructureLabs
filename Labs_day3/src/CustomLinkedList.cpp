@@ -2,15 +2,22 @@
 #include "../headers/CustomLinkedList.h"
 #include <iostream>
 #include <stdexcept>
+#include "CustomLinkedList.h"
 using namespace std;
 // constructors
 
 CustomLinkedList::CustomLinkedList() : head(nullptr), tail(nullptr) {}
 
 // insertions
+void CustomLinkedList::setHead(Node *newHead)
+{
+	head = newHead;
+}
 
-// add at the end of the list
-
+void CustomLinkedList::setTail(Node *newTail)
+{
+	tail = newTail;
+}
 bool CustomLinkedList::add(int data)
 {
 	Node *newNode = new Node(data);
@@ -32,7 +39,48 @@ bool CustomLinkedList::add(int data)
 	tail = newNode;
 	return true;
 }
+bool CustomLinkedList::insertAfterByNode(Node *current, Node *target)
+{
+	if (head == nullptr || current == nullptr || target == nullptr)
+		return false;
+	// Connect target to current's next
+	target->prev = current;
+	target->next = current->next;
+	// Update current's next to point to target
+	current->next = target;
+	// If there was a node after current, update its prev pointer
+	if (target->next != nullptr)
+	{
+		target->next->prev = target;
+	}
+	else
+	{
+		// We inserted at the end, so update tail
+		tail = target;
+	}
 
+	return true;
+}
+bool CustomLinkedList::insertBeforeByNode(Node *current, Node *target)
+{
+	if (head == nullptr || current == nullptr || target == nullptr)
+		return false;
+	// Connect target to current's prev
+	target->next = current;
+	target->prev = current->prev;
+	// update current prev
+	current->prev = target;
+	if (target->prev != nullptr)
+	{
+		target->prev->next = target;
+	}
+	else
+	{
+		head = target;
+	}
+	// Connect newNode to temp's previous
+	return true;
+}
 bool CustomLinkedList::insertAfterByIndex(int index, int data)
 {
 	if (head == nullptr || index < 0)
@@ -97,7 +145,33 @@ bool CustomLinkedList::insertBefore(int beforeData, int data)
 	return insertBeforeByIndex(index, data);
 }
 // remove functions
+bool CustomLinkedList::detach(Node *target)
+{
+	if (head == nullptr)
+		return false;
+	if (target == nullptr)
+		return false;
+	// Update previous node's next pointer (or head if no previous)
+	if (target->prev != nullptr)
+	{
+		target->prev->next = target->next;
+	}
+	else
+	{
+		head = target->next; // Removing head
+	}
 
+	// Update next node's prev pointer (or tail if no next)
+	if (target->next != nullptr)
+	{
+		target->next->prev = target->prev;
+	}
+	else
+	{
+		tail = target->prev; // Removing tail
+	}
+	return true;
+}
 // remove at a certain index
 bool CustomLinkedList::removeAt(int index)
 {
@@ -226,7 +300,14 @@ int CustomLinkedList::getDataByIndex(int index)
 	}
 	throw invalid_argument("Index is out of bounds");
 }
-
+Node *CustomLinkedList::getHead() const
+{
+	return head;
+}
+Node *CustomLinkedList::getTail() const
+{
+	return tail;
+}
 // display
 void CustomLinkedList::printList()
 {

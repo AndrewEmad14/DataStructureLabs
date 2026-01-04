@@ -11,7 +11,7 @@ int main(void)
   myLinkedList.add(12);
   myLinkedList.add(1);
   myLinkedList.add(7);
-  SortManager::bubbleSort(myLinkedList);
+  SortManager::insertionSort(myLinkedList);
   try
   {
     myLinkedList.printList();
